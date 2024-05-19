@@ -4,4 +4,4 @@ from rest_framework.response import Response
 
 @api_view(['GET'])
 def hello_world(request):
-    return Response({'message': 'look into those angeleyeeesss'})
+    return Response({'message': 'meow'})
