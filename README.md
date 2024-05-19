@@ -29,6 +29,8 @@ changed to .env file for secret keys, removed starter insecure django secret key
 
 renamed backend core module from server to hestia_core for legibility (i dont think it broke anything buuuut :fingers_crossed:)
 
+nabbed a dashboard template from https://github.com/devias-io/material-kit-react. i am slightly dubious as to whether introducing this much complexity (Material UI, Next.js as frontend) is a good idea but i think it will definitely help me learn!
+
 ## 5/17/2024
 
 If using an M1 Mac, you may receive an error when installing pyaudio. In that case, you should run `brew install portaudio` before trying again.
