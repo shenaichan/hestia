@@ -27,6 +27,7 @@ Or, if you don't want/need a background service you can just run:
 
 changed to .env file for secret keys, removed starter insecure django secret key, edited .ppn paths in main
 
+renamed backend core module from server to hestia_core for legibility (i dont think it broke anything buuuut :fingers_crossed:)
 
 ## 5/17/2024
 
