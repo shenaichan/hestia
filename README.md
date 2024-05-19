@@ -25,6 +25,8 @@ Or, if you don't want/need a background service you can just run:
 
 </blockquote>
 
+changed to .env file for secret keys, removed starter insecure django secret key, edited .ppn paths in main
+
 
 ## 5/17/2024
 

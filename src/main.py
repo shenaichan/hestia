@@ -3,14 +3,18 @@ import os
 import pyaudio
 import struct
 from datetime import datetime
+from dotenv import load_dotenv, find_dotenv
+
+# load env variables
+load_dotenv(find_dotenv())
 
 # for staggering keyword recognition
 prev_time = datetime.now()
 
 # params for porcupine initializer
 access_key = os.getenv('PV_ACCESS_KEY')
-keyword_paths=['wake_word_models/hestia_MAC.ppn', 
-               'wake_word_models/hey_hestia_MAC.ppn']
+keyword_paths=['../wake_word_models/hestia_MAC.ppn', 
+               '../wake_word_models/hey_hestia_MAC.ppn']
 
 # create objects to be populated later, if fail then they're available to be handled in the finally case
 porcupine = None

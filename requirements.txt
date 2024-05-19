@@ -6,4 +6,5 @@ djangorestframework==3.15.1
 paho-mqtt==2.1.0
 pvporcupine==3.0.2
 PyAudio==0.2.14
+python-dotenv==1.0.1
 sqlparse==0.5.0
