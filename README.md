@@ -1,6 +1,10 @@
 # hestia
 Hestia is a secure, customizable home automation assistant, second memory, and chatbot.
 
+## 5/20/2024
+
+hmmmmm
+
 ## 5/19/2024
 
 set up MQTT connection such that you can write to main.py from the CLI and write to the CLI from main.py. stands to reason that you can connect between two python files but will test later

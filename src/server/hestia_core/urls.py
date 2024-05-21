@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include 
+from hestia_api.consumers import CommandConsumer
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('hestia_api.urls'))
+    path('api/', include('hestia_api.urls')),
+    path('ws/command/', CommandConsumer.as_asgi()),
+
 ]

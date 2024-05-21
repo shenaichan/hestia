@@ -15,6 +15,26 @@ import { Traffic } from '@/components/dashboard/overview/traffic';
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
 
+const chatSocket = new WebSocket('ws://localhost:8000/ws/command/');
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const message = data['message'];
+    console.log(message);
+    // Handle incoming message
+};
+
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
+// Send message to server
+function sendMessage(message: any) {
+    chatSocket.send(JSON.stringify({
+        'message': message
+    }));
+}
+
 export default function Page(): React.JSX.Element {
   return (
     <Grid container spacing={3}>

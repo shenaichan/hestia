@@ -5,6 +5,7 @@
   "licence": "MIT",
   "homepage": "https://devias.io",
   "private": false,
+  "proxy": "http://localhost:8000/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -27,11 +27,13 @@ export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | nul
       return;
     }
 
-    if (!user) {
-      logger.debug('[AuthGuard]: User is not logged in, redirecting to sign in');
-      router.replace(paths.auth.signIn);
-      return;
-    }
+    // note: removed auth?
+
+    // if (!user) {
+    //   logger.debug('[AuthGuard]: User is not logged in, redirecting to sign in');
+    //   router.replace(paths.auth.signIn);
+    //   return;
+    // }
 
     setIsChecking(false);
   };
