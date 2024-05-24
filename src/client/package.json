@@ -39,6 +39,7 @@
     "react-apexcharts": "1.4.1",
     "react-dom": "18.2.0",
     "react-hook-form": "7.51.0",
+    "react-use-websocket": "^4.8.1",
     "zod": "3.22.4"
   },
   "devDependencies": {

@@ -1,4 +1,7 @@
+'use client'
+
 import * as React from 'react';
+import {useRef, useEffect} from 'react';
 import type { Metadata } from 'next';
 import Grid from '@mui/material/Unstable_Grid2';
 import dayjs from 'dayjs';
@@ -13,29 +16,37 @@ import { TotalCustomers } from '@/components/dashboard/overview/total-customers'
 import { TotalProfit } from '@/components/dashboard/overview/total-profit';
 import { Traffic } from '@/components/dashboard/overview/traffic';
 
-export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-const chatSocket = new WebSocket('ws://localhost:8000/ws/command/');
+// export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
 
-chatSocket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    const message = data['message'];
-    console.log(message);
-    // Handle incoming message
-};
-
-chatSocket.onclose = function(e) {
-    console.error('Chat socket closed unexpectedly');
-};
-
-// Send message to server
-function sendMessage(message: any) {
-    chatSocket.send(JSON.stringify({
-        'message': message
-    }));
-}
+const WS_URL = 'ws://localhost:8000/ws/command/';
 
 export default function Page(): React.JSX.Element {
+  
+  const { sendMessage, lastMessage, readyState } = useWebSocket(
+    WS_URL,
+    {
+      share: false,
+      shouldReconnect: () => true,
+    },
+  );
+
+  // Run when the connection state (readyState) changes
+  useEffect(() => {
+    console.log("Connection state changed");
+    if (readyState === ReadyState.OPEN) {
+      console.log("connected?");
+    }
+  }, [readyState]);
+
+  // Run when a new WebSocket message is received (lastMessage)
+  useEffect(() => {
+    if (lastMessage) {
+      console.log(`Got a new message: ${lastMessage.data}`);
+    }
+  }, [lastMessage])
+
   return (
     <Grid container spacing={3}>
       <Grid lg={3} sm={6} xs={12}>
