@@ -2,6 +2,19 @@ version = 1
 requires-python = ">=3.12"
 
 [[package]]
+name = "azure-cognitiveservices-speech"
+version = "1.40.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/06/6d/5135f08e01725f943339847f3edf72997338823782f2ce5b32c35b4af431/azure_cognitiveservices_speech-1.40.0-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:c19e6e95db81e7b2931641ad9c945b8a914541feada9ae131a253ffdf4d731f4", size = 6782927 },
+    { url = "https://files.pythonhosted.org/packages/d8/c0/a9c3c18d8a45a6fced594aa8fc4a3ae9628f26387444469884cc5a0ef547/azure_cognitiveservices_speech-1.40.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:5f9dcd42cb265ca2e7eb6e4b6a42dc0b2d5e889347cf48e0b254f6911bf88ace", size = 6693399 },
+    { url = "https://files.pythonhosted.org/packages/c4/14/9d00edb00f7888a4f4cac2c1e24ee7d4147a8d9e87fb9804a8a207303e30/azure_cognitiveservices_speech-1.40.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:9fce3f8b201129adec5d7d17ee004168cff332e74e658efce4fec665eefae54b", size = 40059454 },
+    { url = "https://files.pythonhosted.org/packages/ee/b8/284fafbc7d06e6dbb4c8e437cee84d903e13a608b5df6aeb9c5a2676e10a/azure_cognitiveservices_speech-1.40.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:ad72f0c476ccbbe7a733e76ea4f6eaee2df1455b9e48ba118ba72ddd971c558a", size = 39825392 },
+    { url = "https://files.pythonhosted.org/packages/a4/06/3634d7f7fcfbd9ae7bef48f740c90d91767101c602362c285f38d1959969/azure_cognitiveservices_speech-1.40.0-py3-none-win32.whl", hash = "sha256:74e4ead7d685d96df86a31492faddabbeec44b2c9fb16b14c9cc19430a4aa9f8", size = 1431631 },
+    { url = "https://files.pythonhosted.org/packages/e4/8e/1604db625ae74a7373bcece8d882735c86323141c57750297b21fc69dcb3/azure_cognitiveservices_speech-1.40.0-py3-none-win_amd64.whl", hash = "sha256:8f17752cd89231dd9404b70b4832c17aa1f491326c163f53bfa2c0879c03f14f", size = 1542609 },
+]
+
+[[package]]
 name = "bidict"
 version = "0.23.1"
 source = { registry = "https://pypi.org/simple" }
@@ -230,6 +243,7 @@ name = "server"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "azure-cognitiveservices-speech" },
     { name = "flask" },
     { name = "flask-socketio" },
     { name = "flask-sqlalchemy" },
@@ -241,6 +255,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "azure-cognitiveservices-speech", specifier = ">=1.40.0" },
     { name = "flask", specifier = ">=3.0.3" },
     { name = "flask-socketio", specifier = ">=5.3.7" },
     { name = "flask-sqlalchemy", specifier = ">=3.1.1" },
