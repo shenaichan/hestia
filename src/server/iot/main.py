@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 from pathlib import Path
 from core.STT import recognize_from_microphone
 from core.TTS import text_to_speech_stream, azure_tts
-from core.audio_out import play_audio_with_pyaudio
+# from core.audio_out import play_audio_with_pyaudio
 from core.function_routing import answer
 
 # Callback when the client connects to the broker
@@ -32,8 +32,8 @@ prev_time = datetime.now()
 # params for porcupine initializer
 access_key = os.getenv('PV_ACCESS_KEY')
 base_path = Path(__file__).resolve().parent.parent.parent.parent
-keyword_paths=[base_path / 'wake_word_models/hestia_MAC.ppn', 
-               base_path / 'wake_word_models/hey_hestia_MAC_20241002.ppn']
+keyword_paths=[base_path / 'wake_word_models/hestia_rpi.ppn', 
+               base_path / 'wake_word_models/hey_hestia_rpi.ppn']
 
 # create objects to be populated later, if fail then they're available to be handled in the finally case
 porcupine = None
@@ -45,17 +45,17 @@ cnt = 0
 
 try:
 
-    # Create an MQTT client instance
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    # # Create an MQTT client instance
+    # client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
-    # Assign the callback functions
-    client.on_connect = on_connect
-    client.on_message = on_message
+    # # Assign the callback functions
+    # client.on_connect = on_connect
+    # client.on_message = on_message
 
-    # Connect to the local broker
-    client.connect("localhost", 1883, 60)
+    # # Connect to the local broker
+    # client.connect("localhost", 1883, 60)
 
-    client.loop_start()
+    # client.loop_start()
 
     # Initialize the Porcupine object
     porcupine = pvporcupine.create(
