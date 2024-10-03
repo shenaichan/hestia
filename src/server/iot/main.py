@@ -85,7 +85,7 @@ try:
         if keyword_index >= 0 and (datetime.now() - prev_time).seconds >= 1:
             audio_stream.stop_stream()
             prev_time = datetime.now()
-            client.publish("test/from_main", "hestia listening")
+            # client.publish("test/from_main", "hestia listening")
             if keyword_index == 0:
                 cnt += 1
                 print(str(cnt) + " hestia detected!")
