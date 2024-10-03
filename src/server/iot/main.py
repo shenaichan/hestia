@@ -10,6 +10,7 @@ from core.STT import recognize_from_microphone
 from core.TTS import text_to_speech_stream, azure_tts
 # from core.audio_out import play_audio_with_pyaudio
 from core.function_routing import answer
+from core.play_ding import play_ding
 
 # import pygame
 
@@ -103,6 +104,7 @@ try:
             # pygame.mixer.music.play()
             # while pygame.mixer.music.get_busy():
             #     pygame.time.Clock().tick(10)
+            play_ding()
                 
             user_text = recognize_from_microphone()
 
