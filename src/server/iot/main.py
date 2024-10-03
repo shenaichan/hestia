@@ -10,50 +10,10 @@ from core.STT import recognize_from_microphone
 from core.TTS import text_to_speech_stream, azure_tts
 # from core.audio_out import play_audio_with_pyaudio
 from core.function_routing import answer
-# from core.play_ding import play_ding
+from core.play_ding import play_ding
 
 import pyaudio
 import wave
-
-def play_ding():
-    # Define the audio file path
-    audio_file = 'ding.wav'
-
-    # Open the audio file
-    wf = wave.open(audio_file, 'rb')
-
-    # Create an interface to PortAudio
-    p = pyaudio.PyAudio()
-
-    # Open a .Stream object to write the WAV file to the audio output
-    # 'format' gets the sample format from the WAV file
-    # 'channels' gets the number of channels (1 for mono, 2 for stereo, etc.)
-    # 'rate' gets the frame rate (samples per second)
-    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                    channels=wf.getnchannels(),
-                    rate=wf.getframerate(),
-                    output=True)
-
-    # Read data in chunks
-    chunk = 1024
-    data = wf.readframes(chunk)
-
-    # Play the sound by writing the audio data to the stream
-    while data:
-        stream.write(data)
-        data = wf.readframes(chunk)
-
-    # Stop and close the stream
-    stream.stop_stream()
-    stream.close()
-
-    # Close PyAudio
-    p.terminate()
-
-    # Close the WAV file
-    wf.close()
-
-play_ding()
 
 # import pygame
 
@@ -147,9 +107,11 @@ try:
             # pygame.mixer.music.play()
             # while pygame.mixer.music.get_busy():
             #     pygame.time.Clock().tick(10)
-            play_ding()
+            azure_tts("what's up?")
                 
             user_text = recognize_from_microphone()
+
+            azure_tts("sure, let me think")
 
             if user_text:
                 gpt_text = answer(user_text)
