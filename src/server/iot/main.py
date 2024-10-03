@@ -9,6 +9,7 @@ from pathlib import Path
 from core.STT import recognize_from_microphone
 from core.TTS import text_to_speech_stream
 from core.audio_out import play_audio_with_pyaudio
+from core.function_routing import answer
 
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc, properties):
@@ -91,7 +92,10 @@ try:
             elif keyword_index == 1:
                 cnt += 1
                 print(str(cnt) + " hey hestia detected!")
-            play_audio_with_pyaudio(text_to_speech_stream(recognize_from_microphone()))
+            user_text = recognize_from_microphone()
+            gpt_text = answer(user_text)
+            out_stream = text_to_speech_stream(gpt_text)
+            play_audio_with_pyaudio(out_stream)
             audio_stream.start_stream()
 
 except KeyboardInterrupt:
