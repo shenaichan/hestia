@@ -92,7 +92,9 @@ try:
             elif keyword_index == 1:
                 cnt += 1
                 print(str(cnt) + " hey hestia detected!")
+            azure_tts("listening")
             user_text = recognize_from_microphone()
+            azure_tts("not listening")
             if user_text:
                 gpt_text = answer(user_text)
                 azure_tts(gpt_text)
