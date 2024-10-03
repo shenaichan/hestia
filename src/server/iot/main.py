@@ -11,7 +11,7 @@ from core.TTS import text_to_speech_stream, azure_tts
 # from core.audio_out import play_audio_with_pyaudio
 from core.function_routing import answer
 
-import pygame
+# import pygame
 
 
 
@@ -61,8 +61,8 @@ try:
 
     # client.loop_start()
 
-    pygame.mixer.init()
-    pygame.mixer.music.load("ding.mp3")
+    # pygame.mixer.init()
+    # pygame.mixer.music.load("ding.mp3")
 
     # Initialize the Porcupine object
     porcupine = pvporcupine.create(
@@ -100,9 +100,9 @@ try:
                 cnt += 1
                 print(str(cnt) + " hey hestia detected!")
 
-            pygame.mixer.music.play()
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
+            # pygame.mixer.music.play()
+            # while pygame.mixer.music.get_busy():
+            #     pygame.time.Clock().tick(10)
                 
             user_text = recognize_from_microphone()
 
