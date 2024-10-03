@@ -7,7 +7,7 @@ from dotenv import load_dotenv, find_dotenv
 import paho.mqtt.client as mqtt
 from pathlib import Path
 from core.STT import recognize_from_microphone
-from core.TTS import text_to_speech_stream
+from core.TTS import text_to_speech_stream, azure_tts
 from core.audio_out import play_audio_with_pyaudio
 from core.function_routing import answer
 
@@ -33,7 +33,7 @@ prev_time = datetime.now()
 access_key = os.getenv('PV_ACCESS_KEY')
 base_path = Path(__file__).resolve().parent.parent.parent.parent
 keyword_paths=[base_path / 'wake_word_models/hestia_MAC.ppn', 
-               base_path / 'wake_word_models/hey_hestia_MAC.ppn']
+               base_path / 'wake_word_models/hey_hestia_MAC_20241002.ppn']
 
 # create objects to be populated later, if fail then they're available to be handled in the finally case
 porcupine = None
@@ -93,9 +93,11 @@ try:
                 cnt += 1
                 print(str(cnt) + " hey hestia detected!")
             user_text = recognize_from_microphone()
-            gpt_text = answer(user_text)
-            out_stream = text_to_speech_stream(gpt_text)
-            play_audio_with_pyaudio(out_stream)
+            if user_text:
+                gpt_text = answer(user_text)
+                azure_tts(gpt_text)
+                # out_stream = text_to_speech_stream(gpt_text)
+                # play_audio_with_pyaudio(out_stream)
             audio_stream.start_stream()
 
 except KeyboardInterrupt:
