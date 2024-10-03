@@ -7,10 +7,13 @@ from dotenv import load_dotenv, find_dotenv
 import paho.mqtt.client as mqtt
 from pathlib import Path
 from core.STT import recognize_from_microphone
-from core.TTS import text_to_speech_stream, azure_tts
+from core.TTS import azure_tts
 # from core.audio_out import play_audio_with_pyaudio
 from core.function_routing import answer
 # from core.play_ding import play_ding
+from apis.spotify_api import play_artist
+import platform
+import json
 
 import pyaudio
 import wave
@@ -39,9 +42,15 @@ prev_time = datetime.now()
 
 # params for porcupine initializer
 access_key = os.getenv('PV_ACCESS_KEY')
-base_path = Path(__file__).resolve().parent.parent.parent.parent
-keyword_paths=[base_path / 'wake_word_models/hestia_rpi.ppn', 
-               base_path / 'wake_word_models/hey_hestia_rpi.ppn']
+base_path = Path(__file__).resolve().parent.parent.parent
+
+keyword_paths = []
+if platform.system() == "Darwin":
+    keyword_paths=[base_path / 'wake_word_models/hestia_MAC.ppn', 
+                   base_path / 'wake_word_models/hey_hestia_MAC.ppn']
+else:
+    keyword_paths=[base_path / 'wake_word_models/hestia_rpi.ppn', 
+                   base_path / 'wake_word_models/hey_hestia_rpi.ppn']
 
 # create objects to be populated later, if fail then they're available to be handled in the finally case
 porcupine = None
@@ -111,13 +120,40 @@ try:
                 
             user_text = recognize_from_microphone()
 
-            azure_tts("sure, let me think")
+            azure_tts("sure! let me think")
 
             if user_text:
-                gpt_text = answer(user_text)
-                azure_tts(gpt_text)
-                # out_stream = text_to_speech_stream(gpt_text)
-                # play_audio_with_pyaudio(out_stream)
+                response = answer(user_text)
+
+                # Check if the model has made a tool_call. This is the case either if the "finish_reason" is "tool_calls" or if the "finish_reason" is "stop" and our API request had forced a function call
+                if (response.choices[0].finish_reason == "tool_calls"):
+                    # This handles the edge case where if we forced the model to call one of our functions, the finish_reason will actually be "stop" instead of "tool_calls"
+                    # (our_api_request_forced_a_tool_call and response['choices'][0]['message']['finish_reason'] == "stop")):
+
+                    # Handle tool call
+                    print("Model made a tool call.")
+                    # Your code to handle tool calls
+                    # handle_tool_call(response)
+
+                    print(response.choices[0])
+                    tool_call = response.choices[0].message.tool_calls[0]
+                    arguments = json.loads(tool_call.function.arguments)
+
+                    artist = arguments.get('artist')
+                    play_artist(artist)
+                    azure_tts(f"Playing {artist}")
+                    
+                # Else finish_reason is "stop", in which case the model was just responding directly to the user
+                elif response.choices[0].finish_reason == "stop":
+                    # Handle the normal stop case
+                    print("Model responded directly to the user.")
+                    # Your code to handle normal responses
+                    # handle_normal_response(response)
+                    azure_tts(response.choices[0].message.content)
+
+                # Catch any other case, this is unexpected
+                else:
+                    print("what")
             audio_stream.start_stream()
 
 except KeyboardInterrupt:

@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "azure-cognitiveservices-speech>=1.40.0",
-    "elevenlabs>=1.9.0",
     "flask-socketio>=5.3.7",
     "flask-sqlalchemy>=3.1.1",
     "flask>=3.0.3",
@@ -14,6 +13,6 @@ dependencies = [
     "paho-mqtt>=2.1.0",
     "pvporcupine>=3.0.3",
     "pyaudio>=0.2.14",
-    "pygame>=2.6.1",
     "python-dotenv>=1.0.1",
+    "spotipy>=2.24.0",
 ]

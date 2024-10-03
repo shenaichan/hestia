@@ -1,1 +1,4 @@
 .venv
+config_spotify.py
+.cache
+tokens.json
