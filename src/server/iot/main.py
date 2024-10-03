@@ -11,6 +11,10 @@ from core.TTS import text_to_speech_stream, azure_tts
 # from core.audio_out import play_audio_with_pyaudio
 from core.function_routing import answer
 
+import pygame
+
+
+
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc, properties):
     print("Connected with result code " + str(rc))
@@ -57,6 +61,9 @@ try:
 
     # client.loop_start()
 
+    pygame.mixer.init()
+    pygame.mixer.music.load("ding.mp3")
+
     # Initialize the Porcupine object
     porcupine = pvporcupine.create(
         access_key=access_key,
@@ -92,9 +99,13 @@ try:
             elif keyword_index == 1:
                 cnt += 1
                 print(str(cnt) + " hey hestia detected!")
-            azure_tts("listening")
+
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pygame.time.Clock().tick(10)
+                
             user_text = recognize_from_microphone()
-            azure_tts("not listening")
+
             if user_text:
                 gpt_text = answer(user_text)
                 azure_tts(gpt_text)
