@@ -8,7 +8,7 @@ export type ChatMessage = {
   content: string
 }
 
-const socketURL = "http://10.0.0.7:6969"
+const socketURL = "http://10.0.0.244:6969"
 const socket = io(socketURL)
 
 function App() {

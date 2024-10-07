@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 
 
 app = Flask(__name__)
-CORS(app, resources={ r"/*": { "origins": "*"}})
+CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Callback when the client connects to the broker
