@@ -69,14 +69,6 @@ function App() {
   }, []);
 
   function submitText() {
-    setChatHistory(chatHistory => 
-      [...chatHistory, 
-        { 
-          role: 'player', 
-          content: "> ".concat(inputText)
-        }
-      ]
-    )
     
     socket.emit("command", inputText)
 
