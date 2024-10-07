@@ -8,13 +8,11 @@ SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
 SPOTIPY_REDIRECT_URI = "http://localhost:8888/callback"
 
 def get_token_info():
-    # Load tokens from the file
-    with open('tokens.json', 'r') as f:
+    with open('apis/spotify_tokens.json', 'r') as f:
         return json.load(f)
 
 def save_token_info(token_info):
-    # Save updated token info back to the file
-    with open('tokens.json', 'w') as f:
+    with open('apis/spotify_tokens.json', 'w') as f:
         json.dump(token_info, f)
 
 def refresh_access_token_if_needed():
@@ -59,6 +57,6 @@ def play_artist(artist):
         if device['name'] == "Web Player (Firefox)":
             device_id = device['id']
             sp.start_playback(device_id=device_id, uris=[track_uri])
-            return "Playing Taylor Swift"    
+            return f"Playing {artist}"    
 
     return "Raspberry Pi not connected"

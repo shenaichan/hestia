@@ -1,0 +1,31 @@
+body {
+  background-color: #fff4f4;
+  font-family: Georgia, Times, 'Times New Roman', serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 0px 30px;
+}
+
+.input {
+  width: 100%;
+  background-color: #ffffff;
+  border: 2px solid blue;
+  padding: 10px;
+  border-radius: 5px;
+  color: blue;
+  font-weight: bold;
+  outline: none;
+  position: relative;
+  height: 45px;
+  bottom: 0;
+  margin-top: 30px;
+}
+
+p {
+  margin: 15px 0px;
+}

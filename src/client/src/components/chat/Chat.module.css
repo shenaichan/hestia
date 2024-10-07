@@ -1,0 +1,12 @@
+.container {
+    flex: 1;
+    overflow-y: scroll;
+    max-height: calc(100vh - 135px);
+    margin: 0;
+    border: 2px solid violet;
+    background-color: white;
+    border-radius: 5px;
+    padding: 0px 15px;
+    scrollbar-color: violet white;
+    scrollbar-width: thin;
+}
