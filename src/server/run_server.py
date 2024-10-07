@@ -20,9 +20,9 @@ def on_connect(client, userdata, flags, rc, properties):
 # Callback when a message is received from the broker
 def on_message(client, userdata, msg):
     if msg.topic == "commands":
-        socketio.emit('command', msg.payload.decode('utf-8'), broadcast=True)
+        socketio.emit('command', msg.payload.decode('utf-8'))
     elif msg.topic == "responses":
-        socketio.emit('response', msg.payload.decode('utf-8'), broadcast=True)
+        socketio.emit('response', msg.payload.decode('utf-8'))
 
 @app.route('/')
 def hello():
