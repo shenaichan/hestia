@@ -1,95 +1,84 @@
 import React, { useState, useEffect } from 'react'
 import css from 'components/App.module.css'
 import Chat from 'components/chat/Chat'
-import { STORY, PageName, Memory, GameState } from 'components/story'
+import { io } from 'socket.io-client'
 
 export type ChatMessage = {
   role: 'player' | 'narrator'
-  content: React.ReactNode
+  content: string
 }
+
+const socketURL = "http://10.0.0.7:6969"
+const socket = io(socketURL)
 
 function App() {
 
   const [inputText, setInputText] = useState<string>('')
-  const [currentPage, setCurrentPage] = useState<PageName>('start')
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([])
-  const [memories] = useState<Memory[]>([])
-  const [gameState, setGameState] = useState<GameState>({ numTimesLookedAtToolbox: 0 })
 
   useEffect(() => {
-    const [nextContent, nextGameState] = STORY[currentPage].content("", [], {numTimesLookedAtToolbox: 0})
-    setChatHistory(
-      [
-        { role: 'narrator', 
-          content: nextContent 
+
+    setChatHistory(chatHistory => 
+      [...chatHistory, 
+        {
+          role: 'narrator',
+          content: "Hello! What can I help you with today?"
         }
-      ])
-    setGameState(nextGameState)
-  }, [])
+      ]
+    )
+
+    function onConnect() {
+      console.log("connected")
+    }
+
+    function onDisconnect() {
+      console.log("disconnected")
+    }
+
+    function onCommand(command: string) {
+      setChatHistory(chatHistory => 
+        [...chatHistory, 
+          { 
+            role: 'player', 
+            content: "> ".concat(command)
+          }
+        ]
+      )
+    }
+
+    function onResponse(response: string) {
+      setChatHistory(chatHistory => 
+        [...chatHistory, 
+          { 
+            role: 'narrator', 
+            content: response
+          }
+        ]
+      )
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    socket.on('command', onCommand);
+    socket.on('response', onResponse);
+    
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, []);
 
   function submitText() {
     setChatHistory(chatHistory => 
       [...chatHistory, 
-        { role: 'player', 
-          content: <p>{`> ${inputText}`}</p> 
+        { 
+          role: 'player', 
+          content: "> ".concat(inputText)
         }
-      ])
+      ]
+    )
     
-    const lowerInputText = inputText.toLowerCase()
-    
-    if (lowerInputText === 'help' || lowerInputText === 'look') {
-      const [nextContent, nextGameState] = STORY[lowerInputText as PageName].content(lowerInputText, memories, gameState) 
-      setChatHistory(chatHistory => 
-        [...chatHistory, 
-          { role: 'narrator', 
-            content: nextContent
-          }
-        ])
-      setGameState(nextGameState)
-    } else if (lowerInputText.includes("look") || lowerInputText.startsWith("l ") ||
-               lowerInputText.includes("examine") || lowerInputText.startsWith("x ")) {
-
-      let obj = ""
-      if (lowerInputText.includes("toolbox")) {
-        obj = "toolbox"
-      } else if (lowerInputText.includes("girl")) {
-        obj = "girl"
-      }
-      
-      let nextPage = ""
-      if (lowerInputText.includes("girl") && 
-          (lowerInputText.includes("examine") || lowerInputText.startsWith("x "))) {
-          nextPage = "examine girl"
-      } else {
-        nextPage = `look ${obj}`
-      }
-
-      const [nextContent, nextGameState] = STORY[nextPage as PageName].content(lowerInputText, memories, gameState)
-      setChatHistory(chatHistory => 
-        [...chatHistory, 
-          { role: 'narrator', 
-            content: nextContent 
-          }
-        ])
-      setGameState(nextGameState)
-      // update state in content
-      
-
-    }
-    else {
-      const nextPage = STORY[currentPage].next(lowerInputText, memories, gameState)
-      const [nextContent, nextGameState] = STORY[nextPage].content(lowerInputText, memories, gameState)
-      setCurrentPage(nextPage)
-      setChatHistory(chatHistory => 
-        [...chatHistory, 
-          { role: 'narrator', 
-            content: nextContent 
-          }
-        ])
-      setGameState(nextGameState)
-    }
-
-    // setGameState(gameState => ({ ...gameState, numTimesAsked: gameState.numTimesAsked + 1 }))
+    socket.emit("command", inputText)
 
     setInputText('')
 

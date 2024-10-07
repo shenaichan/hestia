@@ -21,7 +21,9 @@ function Chat({ chatHistory }: { chatHistory: ChatMessage[] }) {
             fontWeight: message.role === 'player' ? 'bold' : 'normal'
           }}
         >
-          {message.content}
+          <p>
+            {message.content}
+          </p>
         </div>
       ))}
     </div>

@@ -50,7 +50,7 @@ def play_music(query):
         if device['name'] == "Web Player (Firefox)":
             device_id = device['id']
             sp.start_playback(device_id=device_id, uris=[track_uri])
-            return f"Playing {query}"    
+            return f"Playing {query}."    
 
     return "Raspberry Pi not connected"
 
@@ -67,7 +67,7 @@ def pause_music():
         if device['name'] == "Web Player (Firefox)":
             device_id = device['id']
             sp.pause_playback(device_id=device_id)
-            return "Pausing music"    
+            return "Pausing music."    
 
     return "Raspberry Pi not connected"
 

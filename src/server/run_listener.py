@@ -11,10 +11,8 @@ import paho.mqtt.client as mqtt
 from speech.STT import transcribe
 from speech.TTS import synthesize
 
-from llm.function_routing import answer
+from llm.function_routing import answer_and_execute
 import json
-
-from apis.spotify_api import play_music, pause_music
 
 from pprint import pprint
 
@@ -22,7 +20,7 @@ from pprint import pprint
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc, properties):
     print("Connected with result code " + str(rc))
-    client.subscribe("test/to_main")
+    # client.subscribe("commands")
 
 # Callback when a message is received from the broker
 def on_message(client, userdata, msg):
@@ -55,17 +53,17 @@ pa = None
 
 try:
 
-    # # Create an MQTT client instance
-    # client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    # Create an MQTT client instance
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
-    # # Assign the callback functions
-    # client.on_connect = on_connect
-    # client.on_message = on_message
+    # Assign the callback functions
+    client.on_connect = on_connect
+    client.on_message = on_message
 
-    # # Connect to the local broker
-    # client.connect("localhost", 1883, 60)
+    # Connect to the local broker
+    client.connect("10.0.0.244", 1883, 60)
 
-    # client.loop_start()
+    client.loop_start()
 
     porcupine = wake_word.create(
         access_key=access_key,
@@ -92,40 +90,18 @@ try:
         if keyword_index >= 0:
 
             audio_stream.stop_stream()
-            # client.publish("test/from_main", "hestia listening")
             print("hey hestia detected!")
 
             synthesize("what's up?")
             user_text = transcribe()
 
             if user_text:
+                client.publish("commands", user_text)
                 synthesize("sure! let me think")
-                response = answer(user_text)
-                '''
                 response = answer_and_execute(user_text)
+                client.publish("responses", response)
                 synthesize(response)
-                '''
 
-                # Check if the model has made a tool_call. This is the case either if the "finish_reason" is "tool_calls" or if the "finish_reason" is "stop" and our API request had forced a function call
-                if response.choices[0].finish_reason == "tool_calls":
-
-                    print("Model made a tool call.")
-
-                    tool_call = response.choices[0].message.tool_calls[0]
-                    function_name = tool_call.function.name
-                    arguments = json.loads(tool_call.function.arguments)
-
-                    status = locals()[function_name](**arguments)
-                    synthesize(status)
-                    
-                # Else finish_reason is "stop", in which case the model was just responding directly to the user
-                elif response.choices[0].finish_reason == "stop":
-                    print("Model responded directly to the user.")
-                    synthesize(response.choices[0].message.content)
-
-                # Catch any other case, this is unexpected
-                else:
-                    print("what")
             else:
                 synthesize("sorry. I didn't catch that")
 
