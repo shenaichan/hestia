@@ -35,9 +35,9 @@ def handle_connect():
 
 @socketio.on('command')
 def handle_command(command: str):
-    response = answer_and_execute(command)
     client.publish("commands", command)
-    # emit('response', response, broadcast=True)
+    response = answer_and_execute(command)
+    client.publish("responses", response)
 
 if __name__ == '__main__':
 
