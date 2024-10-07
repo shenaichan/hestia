@@ -4,21 +4,28 @@ tools = [
     {
         "type": "function",
         "function": {
-            "name": "play_artist",
-            "description": "Play a musical artist on Spotify. Call this whenever a user wants to hear a musical artist, for example, when a user says 'Play Taylor Swift'.",
+            "name": "play_music",
+            "description": "Play music on Spotify. Call this whenever a user wants to hear a specific song, or a musical artist, or an album, for example, when a user says 'Play Taylor Swift'.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "artist": {
+                    "query": {
                         "type": "string",
-                        "description": "The musical artist's name.",
+                        "description": "The song, artist, or album the user wants to listen to.",
                     },
                 },
-                "required": ["artist"],
+                "required": ["query"],
                 "additionalProperties": False,
             },
         }
-    }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "pause_music",
+            "description": "Pause music on Spotify. Call this whenever a user wants to pause playback, for example, when a user says 'Pause'.",
+        }
+    },
 ]
 
 def answer(text: str) -> str:

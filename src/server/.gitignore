@@ -2,3 +2,7 @@
 apis/config_spotify.py
 .cache
 apis/spotify_tokens.json
+apis/__pycache__
+llm/__pycache__
+speech/__pycache__
+web/__pycache__

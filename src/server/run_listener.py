@@ -14,7 +14,10 @@ from speech.TTS import synthesize
 from llm.function_routing import answer
 import json
 
-from apis.spotify_api import play_artist
+from apis.spotify_api import play_music, pause_music
+
+from pprint import pprint
+
 
 # Callback when the client connects to the broker
 def on_connect(client, userdata, flags, rc, properties):
@@ -90,10 +93,6 @@ try:
 
             audio_stream.stop_stream()
             # client.publish("test/from_main", "hestia listening")
-            # if keyword_index == 0:
-            #     print("hestia detected!")
-            # elif keyword_index == 1:
-                # print("hey hestia detected!")
             print("hey hestia detected!")
 
             synthesize("what's up?")
@@ -108,22 +107,16 @@ try:
                 '''
 
                 # Check if the model has made a tool_call. This is the case either if the "finish_reason" is "tool_calls" or if the "finish_reason" is "stop" and our API request had forced a function call
-                if (response.choices[0].finish_reason == "tool_calls"):
-                    # This handles the edge case where if we forced the model to call one of our functions, the finish_reason will actually be "stop" instead of "tool_calls"
-                    # (our_api_request_forced_a_tool_call and response['choices'][0]['message']['finish_reason'] == "stop")):
-                    
-                    # Handle tool call
-                    print("Model made a tool call.")
-                    # Your code to handle tool calls
-                    # handle_tool_call(response)
+                if response.choices[0].finish_reason == "tool_calls":
 
-                    print(response.choices[0])
+                    print("Model made a tool call.")
+
                     tool_call = response.choices[0].message.tool_calls[0]
+                    function_name = tool_call.function.name
                     arguments = json.loads(tool_call.function.arguments)
 
-                    artist = arguments.get('artist')
-                    play_artist(artist)
-                    synthesize(f"Playing {artist}")
+                    status = locals()[function_name](**arguments)
+                    synthesize(status)
                     
                 # Else finish_reason is "stop", in which case the model was just responding directly to the user
                 elif response.choices[0].finish_reason == "stop":
