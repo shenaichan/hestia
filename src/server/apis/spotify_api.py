@@ -4,7 +4,7 @@ import os
 import json
 import random
 
-# DEBUG
+# # DEBUG
 # from pprint import pprint
 # from dotenv import load_dotenv, find_dotenv
 # load_dotenv(find_dotenv())
@@ -39,9 +39,6 @@ def play_music(query):
 
     sp = Spotify(auth=access_token)
 
-    result = sp.search(q=query, type='track', limit=1)
-    track_uri = result['tracks']['items'][0]['uri']
-
     devices = sp.devices()
     if len(devices['devices']) == 0:
         return "No active devices found"
@@ -49,8 +46,17 @@ def play_music(query):
     for device in devices['devices']:
         if device['name'] == "Web Player (Firefox)":
             device_id = device['id']
+
+            result = sp.search(q=query, type='track', limit=1)
+            track = result['tracks']['items'][0]
+            track_uri = track['uri']
+
             sp.start_playback(device_id=device_id, uris=[track_uri])
-            return f"Playing {query}."    
+
+            artist_name = track['album']['artists'][0]['name']
+            song_name = track['name']
+
+            return f"Playing {song_name} by {artist_name}."    
 
     return "Raspberry Pi not connected"
 
