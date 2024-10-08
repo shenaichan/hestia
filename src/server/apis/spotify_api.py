@@ -53,10 +53,22 @@ def play_music(query):
 
             sp.start_playback(device_id=device_id, uris=[track_uri])
 
-            artist_name = track['album']['artists'][0]['name']
+            artists = track['artists']
+            artist_names = ""
+            if len(artists) == 1:
+                artist_names = artists[0]['name']
+            elif len(artists) == 2:
+                artist_names = artists[0]['name'] + " and " + artists[1]['name']
+            else:
+                for idx, artist in enumerate(artists):
+                    if idx == len(artists) - 1:
+                        artist_names += "and " + artist['name']
+                    else:
+                        artist_names += artist['name'] + ", "
+            
             song_name = track['name']
-
-            return f"Playing {song_name} by {artist_name}."    
+            
+            return f"Playing {song_name} by {artist_names}."    
 
     return "Raspberry Pi not connected"
 
@@ -77,4 +89,4 @@ def pause_music():
 
     return "Raspberry Pi not connected"
 
-# play_music("Juna by Clairo")
+# play_music("juna clairo")
