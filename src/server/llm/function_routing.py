@@ -31,6 +31,8 @@ tools = [
 ]
 
 def answer_and_execute(text: str) -> str:
+    if len(text) > 0 and text[-1] != ".":
+        text += "."
     client = OpenAI()
     response = client.chat.completions.create(
         model="gpt-4o-mini",
