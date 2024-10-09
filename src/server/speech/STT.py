@@ -2,7 +2,7 @@ import os
 import azure.cognitiveservices.speech as speechsdk
 
 def transcribe():
-    speech_config = speechsdk.SpeechConfig(subscription=os.getenv("AZURE_STT_ACCESS_KEY"), region="eastus")
+    speech_config = speechsdk.SpeechConfig(subscription=os.getenv("AZURE_SPEECH_ACCESS_KEY"), region="eastus")
     speech_config.speech_recognition_language="en-US"
     audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)

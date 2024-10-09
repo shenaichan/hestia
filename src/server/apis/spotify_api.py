@@ -2,16 +2,21 @@ from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 import os
 import json
-import random
+
+
 
 # # DEBUG
 # from pprint import pprint
 # from dotenv import load_dotenv, find_dotenv
 # load_dotenv(find_dotenv())
 
+
+
 SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
 SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
-SPOTIPY_REDIRECT_URI = "http://localhost:8888/callback"
+SPOTIPY_REDIRECT_URI = "http://localhost:5000/"
+
+
 
 def get_token_info():
     with open('apis/spotify_tokens.json', 'r') as f:
@@ -20,6 +25,8 @@ def get_token_info():
 def save_token_info(token_info):
     with open('apis/spotify_tokens.json', 'w') as f:
         json.dump(token_info, f)
+
+
 
 def refresh_access_token_if_needed():
     token_info = get_token_info()
@@ -34,6 +41,8 @@ def refresh_access_token_if_needed():
 
     return token_info['access_token']
 
+
+
 def play_music(query):
     access_token = refresh_access_token_if_needed()
 
@@ -41,7 +50,7 @@ def play_music(query):
 
     devices = sp.devices()
     if len(devices['devices']) == 0:
-        return "No active devices found"
+        return "No active devices found."
     
     for device in devices['devices']:
         if device['name'] == "Web Player (Firefox)":
@@ -70,7 +79,7 @@ def play_music(query):
             
             return f"Playing {song_name} by {artist_names}."    
 
-    return "Raspberry Pi not connected"
+    return "Raspberry Pi not connected."
 
 def pause_music():
     access_token = refresh_access_token_if_needed()
@@ -79,7 +88,7 @@ def pause_music():
 
     devices = sp.devices()
     if len(devices['devices']) == 0:
-        return "No active devices found"
+        return "No active devices found."
     
     for device in devices['devices']:
         if device['name'] == "Web Player (Firefox)":
@@ -87,6 +96,6 @@ def pause_music():
             sp.pause_playback(device_id=device_id)
             return "Pausing music."    
 
-    return "Raspberry Pi not connected"
+    return "Raspberry Pi not connected."
 
 # play_music("juna clairo")

@@ -2,7 +2,7 @@ import os
 import azure.cognitiveservices.speech as speechsdk
 
 def synthesize(text):
-    speech_config = speechsdk.SpeechConfig(subscription=os.getenv("AZURE_STT_ACCESS_KEY"), region="eastus")
+    speech_config = speechsdk.SpeechConfig(subscription=os.getenv("AZURE_SPEECH_ACCESS_KEY"), region="eastus")
     speech_config.speech_synthesis_voice_name = "en-US-CoraMultilingualNeural"
     speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
 

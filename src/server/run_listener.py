@@ -1,123 +1,99 @@
 import os
 from dotenv import load_dotenv, find_dotenv
 import platform
-
 import pvporcupine as wake_word
 import pyaudio
 import struct
-
 import paho.mqtt.client as mqtt
-
 from speech.STT import transcribe
 from speech.TTS import synthesize
-
 from llm.function_routing import answer_and_execute
-import json
-
-from pprint import pprint
 
 
-# Callback when the client connects to the broker
-def on_connect(client, userdata, flags, rc, properties):
-    print("Connected with result code " + str(rc))
-    # client.subscribe("commands")
 
-# Callback when a message is received from the broker
-def on_message(client, userdata, msg):
-    print(msg.topic + " " + str(msg.payload))
-
-# MQTT
-client = None
-
-# load env variables
 load_dotenv(find_dotenv())
 
-# params for porcupine initializer
-access_key = os.getenv('PV_ACCESS_KEY')
 
-keyword_paths = []
+
+wake_word_access_key = os.getenv('WAKE_WORD_ACCESS_KEY')
+wake_word_paths = []
 if platform.system() == "Darwin":
-    keyword_paths=[
-                    # 'assets/wake_word_models/hestia_MAC.ppn', 
-                   'assets/wake_word_models/hey_hestia_MAC.ppn'
-                  ]
+    wake_word_paths=['assets/wake_word_models/hey_hestia_MAC.ppn']
 else:
-    keyword_paths=[
-                    # 'assets/wake_word_models/hestia_rpi.ppn', 
-                   'assets/wake_word_models/hey_hestia_rpi.ppn'
-                  ]
+    wake_word_paths=['assets/wake_word_models/hey_hestia_rpi.ppn']
+wake_word_listener = wake_word.create(
+    access_key=wake_word_access_key,
+    keyword_paths=wake_word_paths
+)
 
-porcupine = None
-audio_stream = None
-pa = None
+
+
+audio_connection = pyaudio.PyAudio()
+audio_input = audio_connection.open(
+    rate=wake_word_listener.sample_rate,
+    channels=1,
+    format=pyaudio.paInt16,
+    input=True,
+    frames_per_buffer=wake_word_listener.frame_length 
+)
+
+
+
+def mqtt_on_connect(client, userdata, flags, rc, properties):
+    print("Connected with result code " + str(rc))
+    client.subscribe("ring timer")
+
+def mqtt_on_message(client, userdata, msg):
+    if msg.topic == "ring timer":
+        timer_name = msg.payload.decode('utf-8')
+        response = f"Your {timer_name} timer is finished."
+        synthesize(response)
+        client.publish("responses", response)
+
+mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+mqtt_client.on_connect = mqtt_on_connect
+mqtt_client.on_message = mqtt_on_message
+mqtt_client.connect("10.0.0.244", 1883, 60)
+mqtt_client.loop_start()
+
+
+
+print("Listening for wake word...")
+
+
 
 try:
-
-    # Create an MQTT client instance
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-
-    # Assign the callback functions
-    client.on_connect = on_connect
-    client.on_message = on_message
-
-    # Connect to the local broker
-    client.connect("10.0.0.244", 1883, 60)
-
-    client.loop_start()
-
-    porcupine = wake_word.create(
-        access_key=access_key,
-        keyword_paths=keyword_paths
-    )
-
-    pa = pyaudio.PyAudio()
-    audio_stream = pa.open(
-        rate=porcupine.sample_rate,
-        channels=1,
-        format=pyaudio.paInt16,
-        input=True,
-        frames_per_buffer=porcupine.frame_length 
-    )
-
-    print("Listening for wake word...")
-
     while True:
-
-        pcm = audio_stream.read(porcupine.frame_length, exception_on_overflow=False)
-        pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
-        keyword_index = porcupine.process(pcm)
+        curr_audio_frame = audio_input.read(wake_word_listener.frame_length, exception_on_overflow=False)
+        curr_audio_frame = struct.unpack_from("h" * wake_word_listener.frame_length, curr_audio_frame)
+        wake_word_is_present = wake_word_listener.process(curr_audio_frame)
         
-        if keyword_index >= 0:
+        if wake_word_is_present >= 0:
 
-            audio_stream.stop_stream()
+            audio_input.stop_stream()
             print("hey hestia detected!")
 
             synthesize("what's up?")
             user_text = transcribe()
 
             if user_text:
-                client.publish("commands", user_text)
+                mqtt_client.publish("commands", user_text)
                 synthesize("sure! let me think")
                 response = answer_and_execute(user_text)
-                client.publish("responses", response)
+                mqtt_client.publish("responses", response)
                 synthesize(response)
 
             else:
                 synthesize("sorry. I didn't catch that")
 
-            audio_stream.start_stream()
+            audio_input.start_stream()
 
 except KeyboardInterrupt:
-    print("Stopping wake word detection")
+    print("Stopping listener process")
 
 finally:
-    # Ensure resources are cleaned up
-    if porcupine is not None:
-        porcupine.delete()
-    if audio_stream is not None:
-        audio_stream.close()
-    if pa is not None:
-        pa.terminate()
-    if client is not None:
-        client.loop_stop()
+    wake_word_listener.delete()
+    audio_input.close()
+    audio_connection.terminate()
+    mqtt_client.loop_stop()
 
