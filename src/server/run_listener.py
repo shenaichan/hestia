@@ -64,9 +64,9 @@ print("Listening for wake word...")
 
 try:
     while True:
-        curr_audio_frame = listener.read(wake_word_detector.frame_length, exception_on_overflow=False)
-        curr_audio_frame = struct.unpack_from("h" * wake_word_detector.frame_length, curr_audio_frame)
-        wake_word_is_present = wake_word_detector.process(curr_audio_frame)
+        curr_audio_buffer = listener.read(wake_word_detector.frame_length, exception_on_overflow=False)
+        curr_audio_buffer = struct.unpack_from("h" * wake_word_detector.frame_length, curr_audio_buffer)
+        wake_word_is_present = wake_word_detector.process(curr_audio_buffer)
         
         if wake_word_is_present >= 0:
 
