@@ -21,7 +21,7 @@ if platform.system() == "Darwin":
     wake_word_paths=['assets/wake_word_models/hey_hestia_MAC.ppn']
 else:
     wake_word_paths=['assets/wake_word_models/hey_hestia_rpi.ppn']
-wake_word_listener = wake_word.create(
+wake_word_detector = wake_word.create(
     access_key=wake_word_access_key,
     keyword_paths=wake_word_paths
 )
@@ -29,12 +29,12 @@ wake_word_listener = wake_word.create(
 
 
 audio_connection = pyaudio.PyAudio()
-audio_input = audio_connection.open(
-    rate=wake_word_listener.sample_rate,
+listener = audio_connection.open(
+    rate=wake_word_detector.sample_rate,
     channels=1,
     format=pyaudio.paInt16,
     input=True,
-    frames_per_buffer=wake_word_listener.frame_length 
+    frames_per_buffer=wake_word_detector.frame_length 
 )
 
 
@@ -64,13 +64,13 @@ print("Listening for wake word...")
 
 try:
     while True:
-        curr_audio_frame = audio_input.read(wake_word_listener.frame_length, exception_on_overflow=False)
-        curr_audio_frame = struct.unpack_from("h" * wake_word_listener.frame_length, curr_audio_frame)
-        wake_word_is_present = wake_word_listener.process(curr_audio_frame)
+        curr_audio_frame = listener.read(wake_word_detector.frame_length, exception_on_overflow=False)
+        curr_audio_frame = struct.unpack_from("h" * wake_word_detector.frame_length, curr_audio_frame)
+        wake_word_is_present = wake_word_detector.process(curr_audio_frame)
         
         if wake_word_is_present >= 0:
 
-            audio_input.stop_stream()
+            listener.stop_stream()
             print("hey hestia detected!")
 
             synthesize("what's up?")
@@ -86,14 +86,14 @@ try:
             else:
                 synthesize("sorry. I didn't catch that")
 
-            audio_input.start_stream()
+            listener.start_stream()
 
 except KeyboardInterrupt:
     print("Stopping listener process")
 
 finally:
-    wake_word_listener.delete()
-    audio_input.close()
+    wake_word_detector.delete()
+    listener.close()
     audio_connection.terminate()
     mqtt_client.loop_stop()
 
