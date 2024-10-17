@@ -40,7 +40,7 @@ def mqtt_on_message(client, userdata, msg):
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqtt_client.on_connect = mqtt_on_connect
 mqtt_client.on_message = mqtt_on_message
-mqtt_client.connect("10.0.0.244", 1883, 60)
+mqtt_client.connect("10.100.9.197", 1883, 60)
 mqtt_client.loop_start()
 
 

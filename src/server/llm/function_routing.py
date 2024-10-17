@@ -88,7 +88,7 @@ def answer_and_execute(text: str) -> str:
         status = ""
         if function_name == "create_timer":
             mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-            mqtt_client.connect("10.0.0.244", 1883, 60)
+            mqtt_client.connect("10.100.9.197", 1883, 60)
             mqtt_client.loop_start()
             mqtt_client.publish("set timer", tool_call.function.arguments)
             mqtt_client.loop_stop()

@@ -4,7 +4,7 @@
 const char *ssid = "123_home";
 const char *password = NULL; // secret password
 
-const char *mqtt_broker = "10.0.0.244";
+const char *mqtt_broker = "10.100.9.197";
 const char *topic = "temperature";
 const int mqtt_port = 1883;
 
