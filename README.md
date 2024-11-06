@@ -49,21 +49,21 @@ I am currently running Hestia on Raspberry Pi 5, with a Jabra Speak 410 as my co
 
 ## Communication Design
 There are three major processes running at all times:
-- [The voice interface]()
-- [The web server]()
-- [The timer manager]()
+- [The voice interface](https://github.com/shenaichan/hestia/blob/main/src/server/run_listener.py)
+- [The web server](https://github.com/shenaichan/hestia/blob/main/src/server/run_server.py)
+- [The timer manager](https://github.com/shenaichan/hestia/blob/main/src/server/run_timer.py)
 
 These processes communicate with each other using an MQTT publish-subscribe broker running on my Raspberry Pi. For example, the web server subscribes to the "commands" topic, so that when the voice interface process transcribes a command, it can publish the command over the topic for the web server to receive. The web server can then broadcast the command to all connected users over the web dashboard.
 
 
 ## Web Dashboard
-I run a lightweight [Flask server](), which:
+I run a lightweight [Flask server](https://github.com/shenaichan/hestia/blob/main/src/server/run_server.py), which:
 - Listens to the "commands" and "responses" MQTT topics to broadcast commands and responses from the voice interface to all connected clients
-- Listens to the [React chat client]() for textually inputted commands
+- Listens to the [React chat client](https://github.com/shenaichan/hestia/blob/main/src/client/src/components/App.tsx) for textually inputted commands
 
 
 ## Voice Interface
-I run an ongoing ["listener"]() on my Raspberry Pi, which:
+I run an ongoing ["listener"](https://github.com/shenaichan/hestia/blob/main/src/server/run_listener.py) on my Raspberry Pi, which:
 - Listens for the wake word ("hey hestia"), by running audio buffers continually through a Picovoice-generated wake word classifier model
 - On wake word, says "what's up?" and begins transcription with Azure
 - Once silence has been detected, says "sure, let me think..." and sends the request to GPT to evaluate the command
@@ -81,7 +81,7 @@ I'm using the OpenAI API to interpret user commands and decide whether they shou
 ## License
 Hestia is licensed under the MIT License Copyright (c) 2024.
 
-See the [LICENSE]() for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.
+See the [LICENSE](https://github.com/shenaichan/hestia/blob/main/LICENSE) for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.
 
 All trademarks referenced herein are property of their respective holders.
 
